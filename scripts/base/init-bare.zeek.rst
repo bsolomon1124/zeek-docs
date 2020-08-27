@@ -9,6 +9,7 @@ base/init-bare.zeek
 .. zeek:namespace:: GLOBAL
 .. zeek:namespace:: JSON
 .. zeek:namespace:: KRB
+.. zeek:namespace:: LLAnalyzer
 .. zeek:namespace:: MOUNT3
 .. zeek:namespace:: MQTT
 .. zeek:namespace:: NCP
@@ -35,8 +36,8 @@ base/init-bare.zeek
 .. zeek:namespace:: X509
 
 
-:Namespaces: BinPAC, Cluster, DCE_RPC, DHCP, GLOBAL, JSON, KRB, MOUNT3, MQTT, NCP, NFS3, NTLM, NTP, PE, Pcap, RADIUS, RDP, Reporter, SMB, SMB1, SMB2, SNMP, SOCKS, SSH, SSL, TCP, Threading, Tunnel, Unified2, Weird, X509
-:Imports: :doc:`base/bif/const.bif.zeek </scripts/base/bif/const.bif.zeek>`, :doc:`base/bif/event.bif.zeek </scripts/base/bif/event.bif.zeek>`, :doc:`base/bif/option.bif.zeek </scripts/base/bif/option.bif.zeek>`, :doc:`base/bif/plugins/Zeek_KRB.types.bif.zeek </scripts/base/bif/plugins/Zeek_KRB.types.bif.zeek>`, :doc:`base/bif/plugins/Zeek_SNMP.types.bif.zeek </scripts/base/bif/plugins/Zeek_SNMP.types.bif.zeek>`, :doc:`base/bif/reporter.bif.zeek </scripts/base/bif/reporter.bif.zeek>`, :doc:`base/bif/stats.bif.zeek </scripts/base/bif/stats.bif.zeek>`, :doc:`base/bif/strings.bif.zeek </scripts/base/bif/strings.bif.zeek>`, :doc:`base/bif/supervisor.bif.zeek </scripts/base/bif/supervisor.bif.zeek>`, :doc:`base/bif/types.bif.zeek </scripts/base/bif/types.bif.zeek>`, :doc:`base/bif/zeek.bif.zeek </scripts/base/bif/zeek.bif.zeek>`, :doc:`base/frameworks/supervisor/api.zeek </scripts/base/frameworks/supervisor/api.zeek>`
+:Namespaces: BinPAC, Cluster, DCE_RPC, DHCP, GLOBAL, JSON, KRB, LLAnalyzer, MOUNT3, MQTT, NCP, NFS3, NTLM, NTP, PE, Pcap, RADIUS, RDP, Reporter, SMB, SMB1, SMB2, SNMP, SOCKS, SSH, SSL, TCP, Threading, Tunnel, Unified2, Weird, X509
+:Imports: :doc:`base/bif/const.bif.zeek </scripts/base/bif/const.bif.zeek>`, :doc:`base/bif/event.bif.zeek </scripts/base/bif/event.bif.zeek>`, :doc:`base/bif/option.bif.zeek </scripts/base/bif/option.bif.zeek>`, :doc:`base/bif/plugins/Zeek_KRB.types.bif.zeek </scripts/base/bif/plugins/Zeek_KRB.types.bif.zeek>`, :doc:`base/bif/plugins/Zeek_SNMP.types.bif.zeek </scripts/base/bif/plugins/Zeek_SNMP.types.bif.zeek>`, :doc:`base/bif/reporter.bif.zeek </scripts/base/bif/reporter.bif.zeek>`, :doc:`base/bif/stats.bif.zeek </scripts/base/bif/stats.bif.zeek>`, :doc:`base/bif/strings.bif.zeek </scripts/base/bif/strings.bif.zeek>`, :doc:`base/bif/supervisor.bif.zeek </scripts/base/bif/supervisor.bif.zeek>`, :doc:`base/bif/types.bif.zeek </scripts/base/bif/types.bif.zeek>`, :doc:`base/bif/zeek.bif.zeek </scripts/base/bif/zeek.bif.zeek>`, :doc:`base/frameworks/supervisor/api.zeek </scripts/base/frameworks/supervisor/api.zeek>`, :doc:`base/llprotocols </scripts/base/llprotocols/index>`
 
 Summary
 ~~~~~~~
@@ -81,6 +82,7 @@ Redefinable Options
                                                                                            will tolerate on a command before the analyzer will generate a weird
                                                                                            and skip further input.
 :zeek:id:`KRB::keytab`: :zeek:type:`string` :zeek:attr:`&redef`                            Kerberos keytab file name.
+:zeek:id:`LLAnalyzer::config_map`: :zeek:type:`vector` :zeek:attr:`&redef`                 
 :zeek:id:`NCP::max_frame_size`: :zeek:type:`count` :zeek:attr:`&redef`                     The maximum number of bytes to allocate when parsing NCP frames.
 :zeek:id:`NFS3::return_data`: :zeek:type:`bool` :zeek:attr:`&redef`                        If true, :zeek:see:`nfs_proc_read` and :zeek:see:`nfs_proc_write`
                                                                                            events return the file data that has been read/written.
@@ -381,6 +383,7 @@ Types
 :zeek:type:`KRB::Type_Value`: :zeek:type:`record`                             Used in a few places in the Kerberos analyzer for elements
                                                                               that have a type and a string value.
 :zeek:type:`KRB::Type_Value_Vector`: :zeek:type:`vector`                      
+:zeek:type:`LLAnalyzer::ConfigEntry`: :zeek:type:`record`                     
 :zeek:type:`MOUNT3::dirmntargs_t`: :zeek:type:`record`                        MOUNT *mnt* arguments.
 :zeek:type:`MOUNT3::info_t`: :zeek:type:`record`                              Record summarizing the general results and status of MOUNT3
                                                                               request/reply pairs.
@@ -883,6 +886,84 @@ Redefinable Options
    :Default: ``""``
 
    Kerberos keytab file name. Used to decrypt tickets encountered on the wire.
+
+.. zeek:id:: LLAnalyzer::config_map
+
+   :Type: :zeek:type:`vector` of :zeek:type:`LLAnalyzer::ConfigEntry`
+   :Attributes: :zeek:attr:`&redef`
+   :Default:
+
+      ::
+
+         []
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/default/main.zeek`
+
+      ``+=``::
+
+         (coerce [$parent=LLAnalyzer::LLANALYZER_DEFAULTANALYZER, $identifier=4, $analyzer=LLAnalyzer::LLANALYZER_IPV4] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_DEFAULTANALYZER, $identifier=6, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; })
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/ethernet/main.zeek`
+
+      ``+=``::
+
+         (coerce [$identifier=LL_ETHERNET::DLT_EN10MB, $analyzer=LLAnalyzer::LLANALYZER_ETHERNET] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_ETHERNET, $identifier=34887, $analyzer=LLAnalyzer::LLANALYZER_MPLS] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_ETHERNET, $identifier=2048, $analyzer=LLAnalyzer::LLANALYZER_IPV4] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_ETHERNET, $identifier=34525, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_ETHERNET, $identifier=2054, $analyzer=LLAnalyzer::LLANALYZER_ARP] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_ETHERNET, $identifier=32821, $analyzer=LLAnalyzer::LLANALYZER_ARP] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_ETHERNET, $identifier=33024, $analyzer=LLAnalyzer::LLANALYZER_VLAN] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_ETHERNET, $identifier=34984, $analyzer=LLAnalyzer::LLANALYZER_VLAN] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_ETHERNET, $identifier=37120, $analyzer=LLAnalyzer::LLANALYZER_VLAN] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_ETHERNET, $identifier=34916, $analyzer=LLAnalyzer::LLANALYZER_PPPOE] to record { parent:enum; identifier:count; analyzer:enum; })
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/fddi/main.zeek`
+
+      ``+=``::
+
+         (coerce [$identifier=LL_FDDI::DLT_FDDI, $analyzer=LLAnalyzer::LLANALYZER_FDDI] to record { parent:enum; identifier:count; analyzer:enum; })
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/ieee802_11/main.zeek`
+
+      ``+=``::
+
+         (coerce [$identifier=LL_IEEE802_11::DLT_IEEE802_11, $analyzer=LLAnalyzer::LLANALYZER_IEEE802_11] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_IEEE802_11, $identifier=2048, $analyzer=LLAnalyzer::LLANALYZER_IPV4] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_IEEE802_11, $identifier=34525, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_IEEE802_11, $identifier=2054, $analyzer=LLAnalyzer::LLANALYZER_ARP] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_IEEE802_11, $identifier=32821, $analyzer=LLAnalyzer::LLANALYZER_ARP] to record { parent:enum; identifier:count; analyzer:enum; })
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/ieee802_11_radio/main.zeek`
+
+      ``+=``::
+
+         (coerce [$identifier=LL_IEEE802_11_RADIO::DLT_IEEE802_11_RADIO, $analyzer=LLAnalyzer::LLANALYZER_IEEE802_11_RADIO] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_IEEE802_11_RADIO, $identifier=LL_IEEE802_11_RADIO::DLT_IEEE802_11, $analyzer=LLAnalyzer::LLANALYZER_IEEE802_11] to record { parent:enum; identifier:count; analyzer:enum; })
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/linux_sll/main.zeek`
+
+      ``+=``::
+
+         (coerce [$identifier=LL_LINUX_SLL::DLT_LINUX_SLL, $analyzer=LLAnalyzer::LLANALYZER_LINUXSLL] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_LINUXSLL, $identifier=2048, $analyzer=LLAnalyzer::LLANALYZER_IPV4] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_LINUXSLL, $identifier=34525, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_LINUXSLL, $identifier=2054, $analyzer=LLAnalyzer::LLANALYZER_ARP] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_LINUXSLL, $identifier=32821, $analyzer=LLAnalyzer::LLANALYZER_ARP] to record { parent:enum; identifier:count; analyzer:enum; })
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/nflog/main.zeek`
+
+      ``+=``::
+
+         (coerce [$identifier=LL_NFLOG::DLT_NFLOG, $analyzer=LLAnalyzer::LLANALYZER_NFLOG] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_NFLOG, $identifier=LL_NFLOG::AF_INET, $analyzer=LLAnalyzer::LLANALYZER_IPV4] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_NFLOG, $identifier=LL_NFLOG::AF_INET6, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; })
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/null/main.zeek`
+
+      ``+=``::
+
+         (coerce [$identifier=LL_NULL::DLT_NULL, $analyzer=LLAnalyzer::LLANALYZER_NULL] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_NULL, $identifier=LL_NULL::AF_INET, $analyzer=LLAnalyzer::LLANALYZER_IPV4] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_NULL, $identifier=24, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_NULL, $identifier=28, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_NULL, $identifier=30, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; })
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/ppp_serial/main.zeek`
+
+      ``+=``::
+
+         (coerce [$identifier=LL_PPP_SERIAL::DLT_PPP_SERIAL, $analyzer=LLAnalyzer::LLANALYZER_PPPSERIAL] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_PPPSERIAL, $identifier=641, $analyzer=LLAnalyzer::LLANALYZER_MPLS] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_PPPSERIAL, $identifier=33, $analyzer=LLAnalyzer::LLANALYZER_IPV4] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_PPPSERIAL, $identifier=87, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; })
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/pppoe/main.zeek`
+
+      ``+=``::
+
+         (coerce [$parent=LLAnalyzer::LLANALYZER_PPPOE, $identifier=33, $analyzer=LLAnalyzer::LLANALYZER_IPV4] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_PPPOE, $identifier=87, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; })
+
+   :Redefinition: from :doc:`/scripts/base/llprotocols/vlan/main.zeek`
+
+      ``+=``::
+
+         (coerce [$parent=LLAnalyzer::LLANALYZER_VLAN, $identifier=34887, $analyzer=LLAnalyzer::LLANALYZER_MPLS] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_VLAN, $identifier=2048, $analyzer=LLAnalyzer::LLANALYZER_IPV4] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_VLAN, $identifier=34525, $analyzer=LLAnalyzer::LLANALYZER_IPV6] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_VLAN, $identifier=2054, $analyzer=LLAnalyzer::LLANALYZER_ARP] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_VLAN, $identifier=32821, $analyzer=LLAnalyzer::LLANALYZER_ARP] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_VLAN, $identifier=33024, $analyzer=LLAnalyzer::LLANALYZER_VLAN] to record { parent:enum; identifier:count; analyzer:enum; }), (coerce [$parent=LLAnalyzer::LLANALYZER_VLAN, $identifier=34916, $analyzer=LLAnalyzer::LLANALYZER_PPPOE] to record { parent:enum; identifier:count; analyzer:enum; })
+
+
 
 .. zeek:id:: NCP::max_frame_size
 
@@ -3653,6 +3734,17 @@ Types
 .. zeek:type:: KRB::Type_Value_Vector
 
    :Type: :zeek:type:`vector` of :zeek:type:`KRB::Type_Value`
+
+
+.. zeek:type:: LLAnalyzer::ConfigEntry
+
+   :Type: :zeek:type:`record`
+
+      parent: :zeek:type:`LLAnalyzer::Tag` :zeek:attr:`&optional`
+
+      identifier: :zeek:type:`count`
+
+      analyzer: :zeek:type:`LLAnalyzer::Tag`
 
 
 .. zeek:type:: MOUNT3::dirmntargs_t

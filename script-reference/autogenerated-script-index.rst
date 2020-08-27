@@ -14,6 +14,29 @@
    base/bif/plugins/Zeek_SNMP.types.bif.zeek </scripts/base/bif/plugins/Zeek_SNMP.types.bif.zeek>
    base/bif/plugins/Zeek_KRB.types.bif.zeek </scripts/base/bif/plugins/Zeek_KRB.types.bif.zeek>
    base/bif/event.bif.zeek </scripts/base/bif/event.bif.zeek>
+   base/llprotocols/__load__.zeek </scripts/base/llprotocols/__load__.zeek>
+   base/llprotocols/default/__load__.zeek </scripts/base/llprotocols/default/__load__.zeek>
+   base/llprotocols/default/main.zeek </scripts/base/llprotocols/default/main.zeek>
+   base/llprotocols/ethernet/__load__.zeek </scripts/base/llprotocols/ethernet/__load__.zeek>
+   base/llprotocols/ethernet/main.zeek </scripts/base/llprotocols/ethernet/main.zeek>
+   base/llprotocols/fddi/__load__.zeek </scripts/base/llprotocols/fddi/__load__.zeek>
+   base/llprotocols/fddi/main.zeek </scripts/base/llprotocols/fddi/main.zeek>
+   base/llprotocols/ieee802_11/__load__.zeek </scripts/base/llprotocols/ieee802_11/__load__.zeek>
+   base/llprotocols/ieee802_11/main.zeek </scripts/base/llprotocols/ieee802_11/main.zeek>
+   base/llprotocols/ieee802_11_radio/__load__.zeek </scripts/base/llprotocols/ieee802_11_radio/__load__.zeek>
+   base/llprotocols/ieee802_11_radio/main.zeek </scripts/base/llprotocols/ieee802_11_radio/main.zeek>
+   base/llprotocols/linux_sll/__load__.zeek </scripts/base/llprotocols/linux_sll/__load__.zeek>
+   base/llprotocols/linux_sll/main.zeek </scripts/base/llprotocols/linux_sll/main.zeek>
+   base/llprotocols/nflog/__load__.zeek </scripts/base/llprotocols/nflog/__load__.zeek>
+   base/llprotocols/nflog/main.zeek </scripts/base/llprotocols/nflog/main.zeek>
+   base/llprotocols/null/__load__.zeek </scripts/base/llprotocols/null/__load__.zeek>
+   base/llprotocols/null/main.zeek </scripts/base/llprotocols/null/main.zeek>
+   base/llprotocols/ppp_serial/__load__.zeek </scripts/base/llprotocols/ppp_serial/__load__.zeek>
+   base/llprotocols/ppp_serial/main.zeek </scripts/base/llprotocols/ppp_serial/main.zeek>
+   base/llprotocols/pppoe/__load__.zeek </scripts/base/llprotocols/pppoe/__load__.zeek>
+   base/llprotocols/pppoe/main.zeek </scripts/base/llprotocols/pppoe/main.zeek>
+   base/llprotocols/vlan/__load__.zeek </scripts/base/llprotocols/vlan/__load__.zeek>
+   base/llprotocols/vlan/main.zeek </scripts/base/llprotocols/vlan/main.zeek>
    base/init-frameworks-and-bifs.zeek </scripts/base/init-frameworks-and-bifs.zeek>
    base/frameworks/logging/__load__.zeek </scripts/base/frameworks/logging/__load__.zeek>
    base/frameworks/logging/main.zeek </scripts/base/frameworks/logging/main.zeek>
